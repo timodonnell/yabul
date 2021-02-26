@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/timodonnell/yabul.svg?branch=main)](https://travis-ci.com/timodonnell/yabul)
 # yabul
 Yet Another Bioinformatics Utilities Library
 
