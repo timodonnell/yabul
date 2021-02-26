@@ -1,6 +1,7 @@
 # Test fasta reading and writing
 # This test is meant to run using pytest, https://docs.pytest.org/en/stable/
 #
+import shutil
 import os
 import tempfile
 
@@ -22,7 +23,9 @@ def test_read_protein_basic():
 def test_read_and_write():
     for test_file in ["protein.fasta", "transcripts.fasta"]:
         df = read_fasta(os.path.join(DATA_DIR, test_file))
-        with tempfile.TemporaryDirectory() as temp_dir:
+
+        temp_dir = tempfile.mkdtemp()
+        try:
             # Uncompressed write
             out = os.path.join(temp_dir, "out.fasta")
             write_fasta(out, df.set_index("description").sequence.items())
@@ -36,5 +39,8 @@ def test_read_and_write():
             assert os.path.getsize(out_gz) < os.path.getsize(out)
             df2 = read_fasta(out_gz)
             assert_array_equal(df, df2)
+        finally:
+            shutil.rmtree(temp_dir)
+
 
 
