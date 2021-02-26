@@ -62,6 +62,7 @@ def align_pair(
             Characters (similar to BLAST "midline") indicating the
             correspondence between query and reference strings.
         score : int
+            Alignment score. Higher indicates a better alignment.
     """
     import parasail
 
