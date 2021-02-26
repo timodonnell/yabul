@@ -25,9 +25,11 @@ $ pytest test/
 
 ## Example
 
-The [align_pair] function will give a local (Smith-Waterman) and global
+The [align_pair](https://github.com/timodonnell/yabul/blob/main/yabul/align.py#L4) function will give a local (Smith-Waterman) and global
 (Needleman-Wunsch) alignment of two sequences. It returns a pandas.Series
 with the aligned sequences.
+
+By default, the alignment is global:
 ```
 >>> yabul.align_pair("AATESTDD", "TEST")
 query             AATESTDD
@@ -37,7 +39,7 @@ score                   -5
 dtype: object
 ```
 
-Local alignment:
+To do a local alignment, pass `local=True`.
 ```
 >>> yabul.align_pair("AATESTDD", "TEST", local=True)
 query             TEST
@@ -48,7 +50,7 @@ dtype: object
 ```
 
 
-The [read_fasta] function returns a pandas.DataFrame:
+The [read_fasta](https://github.com/timodonnell/yabul/blob/main/yabul/fasta.py#L47) function returns a pandas.DataFrame:
 ```
 >>> import yabul
 >>> df = yabul.read_fasta("test/data/cov2.fasta")
@@ -60,7 +62,7 @@ sp|P0DTD1|R1AB_SARS2   sp|P0DTD1|R1AB_SARS2 Replicase polyprotein 1ab...  MESLVP
 sp|P0DTC1|R1A_SARS2    sp|P0DTC1|R1A_SARS2 Replicase polyprotein 1a O...  MESLVPGFNEKTHVQLSLPVLQVRDVLVRGFGDSVEEVLSEARQHL...
 ```
 
-The [write_fasta]() function takes (name, sequence) pairs:
+The [write_fasta](https://github.com/timodonnell/yabul/blob/main/yabul/fasta.py#L17) function takes (name, sequence) pairs:
 ```
 >>> yabul.write_fasta("out.fasta", [("protein1", "TEST"), ("protein2", "HIHI")])
 ```
