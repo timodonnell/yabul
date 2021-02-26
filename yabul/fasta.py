@@ -25,8 +25,9 @@ def write_fasta(filename, sequences):
 
     sequences : iterable of (name, sequence) pairs
         Sequences to write. Both name and sequence should be strings.
+
     """
-    # wt is
+    # wt is "open for writing in text mode"
     handle = (
         gzip.open(filename, "wt")
         if filename.endswith(".gz")
@@ -55,8 +56,9 @@ def read_fasta(filename):
 
     Returns
     -------
-    pandas.DataFrame with columns "name" and "sequence". The index of the
-    DataFrame is
+    pandas.DataFrame with columns "description" and "sequence". The index of the
+    DataFrame is the "sequence ID", i.e. the first space-separated token of the
+    description.
     """
     reader = FastaParser()
     rows = reader.iterate_over_file(filename)
