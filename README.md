@@ -4,11 +4,13 @@ Yet Another Bioinformatics Utilities Library
 
 This is a small collection of Python functions for working with protein, DNA,
 and RNA sequences. We use [pandas](https://pandas.pydata.org/) data frames
-wherever possible.
+wherever possible. 
 
 Yabul currently supports:
 * Pairwise local and global sequence alignment (uses [parasail](https://github.com/jeffdaily/parasail))
 * Reading and writing FASTAs
+
+Requires Python 3.6+.
  
 ## Installation
 From a checkout run:

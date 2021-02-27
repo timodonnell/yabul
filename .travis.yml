@@ -1,7 +1,6 @@
 dist: groovy
 language: python
 python:
-  - "3.3"
   - "3.6"
   - "3.8"
   - "3.9"
