@@ -5,6 +5,7 @@ python:
   - "3.6"
   - "3.8"
 install:
+  - pip install six
   - pip install .
   - pip install pytest
 script:
