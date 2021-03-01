@@ -28,7 +28,9 @@ $ pytest
 
 ## Example
 
-The [read_fasta](https://github.com/timodonnell/yabul/blob/main/yabul/fasta.py#L47) function returns a pandas.DataFrame:
+### Reading and writing FASTAs
+The [read_fasta](https://github.com/timodonnell/yabul/blob/main/yabul/fasta.py#L47)
+function returns a [`pandas.DataFrame`](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html):
 ```
 >>> import yabul
 >>> df = yabul.read_fasta("test/data/cov2.fasta")
@@ -47,6 +49,7 @@ The [write_fasta](https://github.com/timodonnell/yabul/blob/main/yabul/fasta.py#
 >>> yabul.write_fasta("out2.fasta", df.sequence.items())
 ```
 
+### Sequence alignment
 The [align_pair](https://github.com/timodonnell/yabul/blob/main/yabul/align.py#L4) function will give a local (Smith-Waterman) and global
 (Needleman-Wunsch) alignment of two sequences. It returns a pandas.Series
 with the aligned sequences.
