@@ -29,7 +29,7 @@ $ pytest
 ## Example
 
 ### Reading and writing FASTAs
-The [read_fasta](https://github.com/timodonnell/yabul/blob/main/yabul/fasta.py#L47)
+The [read_fasta](https://yabul.readthedocs.io/en/latest/yabul/yabul.html#yabul.read_fasta)
 function returns a [`pandas.DataFrame`](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html):
 ```
 >>> import yabul
@@ -42,7 +42,7 @@ sp|P0DTD1|R1AB_SARS2   sp|P0DTD1|R1AB_SARS2 Replicase polyprotein 1ab...  MESLVP
 sp|P0DTC1|R1A_SARS2    sp|P0DTC1|R1A_SARS2 Replicase polyprotein 1a O...  MESLVPGFNEKTHVQLSLPVLQVRDVLVRGFGDSVEEVLSEARQHL...
 ```
 
-The [write_fasta](https://github.com/timodonnell/yabul/blob/main/yabul/fasta.py#L17) function takes 
+The [write_fasta](https://yabul.readthedocs.io/en/latest/yabul/yabul.html#yabul.write_fasta) function takes 
 (name, sequence) pairs:
 ```
 >>> yabul.write_fasta("out.fasta", [("protein1", "TEST"), ("protein2", "HIHI")])
@@ -50,7 +50,7 @@ The [write_fasta](https://github.com/timodonnell/yabul/blob/main/yabul/fasta.py#
 ```
 
 ### Sequence alignment
-The [align_pair](https://github.com/timodonnell/yabul/blob/main/yabul/align.py#L4) function will give a local (Smith-Waterman) and global
+The [align_pair](https://yabul.readthedocs.io/en/latest/yabul/yabul.html#yabul.align_pair) function will give a local (Smith-Waterman) and global
 (Needleman-Wunsch) alignment of two sequences. It returns a pandas.Series
 with the aligned sequences.
 
@@ -86,9 +86,19 @@ also be nice to add.
 
 ## Releasing
 To push a new release to PyPI:
-* Make sure the package version specified in [`__init__.py`](yabul/__init__.py)
+* Make sure the package version specified in [`__init__.py`](https://github.com/timodonnell/yabul/blob/main/yabul/__init__.py)
 is a new version greater than what's on [PyPI](https://pypi.org/project/yabul/).
 * Tag a new release on GitHub matching this version
 
 Travis should deploy the release to PyPI automatically.
- 
+
+Documentation at https://yabul.readthedocs.io/en/latest/ should update automatically on commit.
+
+To build the documentation locally, run:
+
+```
+$ cd docs
+$ pip install -r requirements.txt
+$ sphinx-build -b html . _build
+```
+
