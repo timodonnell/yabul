@@ -9,3 +9,12 @@ install:
   - pip install pytest
 script:
   - pytest
+deploy:
+  provider: pypi
+  skip_existing: true
+  distributions: sdist bdist_wheel
+  username: "__token__"
+  password:
+    secure: "AlCukVZjI4z2CeusNkw0SprVL7r+ovYEpvJjO3w7CeNrU/RKe1tIkOJQJ9VT+3lvKenJibAs0KOQ9xCzYsjGelZyT/H9rKckC+37D2GvfOlfxd5Ar/GyG0Y1mG+8tw6Dlk28/NjARtL1w2sf4bcRuyjOkopw7iqHuxoBDGdPQOIG1pzNohaoOh8OQ6MfLZRVXbn0pKrcVSDYAruO0wdiin4diXlWYErFtypZfVjDxF/VzqCralUceb40RGXntSSepsN6plwGUBp1XAwLWu4ALDCjpineXz+FPPlbraEkCUAxzx0UoXwPznZKRGEH1/ZR4w8+MCJGm25qVmNP1THFCXF5IaWrt3w1EmXCSHp5OcZV5LI2wWpDe+vZ62o7famn8F0kGxzZnyalCzuW6VxtuuSnBRTFO1c0xR9Xp84faO1TwebT3UnKPoM6flfHe0IbDBZ/rao5ZpJLPza3Y4oJ+pCkgant2owu6eYGFZ8Tg75XjerME8QJRK3GBOGGqMq/c3w3z72bV3D0o/Mkl+x/gZZ/+AoKGjgQFMQIy0aLlCuOn2UungzPAgdmjPfhNy75SvZuOltLUORP+i3S2hrc7qjrRt00MLVxvr7+mPOM3T+G5+rie96T9v1D7fFgOnyVvV87dqxCtbFOi9KH6CD4LF1YbmYIEKdK1mTdMwkfceo="
+  on:
+    tags: true
