@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+.idea
+docs/_build
+docs/yabul
+
 # C extensions
 *.so
 
