@@ -1,12 +1,10 @@
 """
-Adapted from mhcflurry via pyensembl, github.com/openvax/pyensembl
-Original pyensembl implementation by Alex Rubinsteyn.
+FASTA reading and writing
 """
 
 from __future__ import print_function, division, absolute_import
 
 import gzip
-import logging
 import textwrap
 
 import pandas
@@ -47,10 +45,12 @@ def read_fasta(filename):
     """
     Parse a fasta file to a pandas DataFrame.
 
+    Compression is supported (via pandas read_csv) and is inferred by
+    extension: '.gz', '.bz2', '.zip', or '.xz'.
+
     Parameters
     ----------
     filename : string
-        If the filename ends with '.gz' is will be read as gzip'd input.
 
     Returns
     -------
@@ -58,90 +58,32 @@ def read_fasta(filename):
     DataFrame is the "sequence ID", i.e. the first space-separated token of the
     description.
     """
-    reader = FastaParser()
-    rows = reader.iterate_over_file(filename)
-    result = pandas.DataFrame(
-        rows,
-        columns=["description", "sequence"])
+    # We (mis-) use pandas to parse the file.
+    df = pandas.read_csv(
+        filename,
+        header=None,
+        skip_blank_lines=True,
+        comment=';',  # Fasta comment lines start with ';'
+        sep="\0",  # null separator: never split, always read one column
+    )
+    assert df.shape[1] == 1  # one column
+    df.columns = ["raw"]
+
+    is_header_line = df.raw.str.startswith(">")
+
+    # Assign a new index for every line starting with ">"
+    df.loc[is_header_line, "idx"] = 1
+    df.idx = df.idx.cumsum()
+    df.idx = df.idx.fillna(method="ffill").astype(int)
+
+    idx_to_description = df.loc[is_header_line].set_index("idx").raw.str.slice(1)
+
+    df.loc[~is_header_line, "sequence_piece"] = df.raw
+    df.sequence_piece = df.sequence_piece.fillna("")
+
+    result = df.groupby("idx").sequence_piece.apply("".join).to_frame()
+    result.columns = ["sequence"]
+    result.insert(0, "description", idx_to_description)
     result.index = result.description.str.split().str.get(0)
     result.index.name = "id"
     return result
-
-
-class FastaParser(object):
-    """
-    FastaParser object consumes lines of a FASTA file incrementally.
-    """
-    def __init__(self):
-        self.current_id = None
-        self.current_lines = []
-
-    def iterate_over_file(self, fasta_path):
-        """
-        Generator that yields identifiers paired with sequences.
-        """
-        with self.open_file(fasta_path) as f:
-            for line in f:
-                line = line.rstrip()
-
-                if len(line) == 0:
-                    continue
-
-                # have to slice into a bytes object or else get a single integer
-                first_char = line[0:1]
-
-                if first_char == b">":
-                    previous_entry = self._current_entry()
-                    self.current_id = self._parse_header_id(line)
-
-                    if len(self.current_id) == 0:
-                        logging.warning(
-                            "Unable to parse ID from header line: %s", line)
-
-                    self.current_lines = []
-
-                    if previous_entry is not None:
-                        yield previous_entry
-
-                elif first_char == b";":
-                    # semicolon are comment characters
-                    continue
-                else:
-                    self.current_lines.append(line)
-
-        # the last sequence is still in the lines buffer after we're done with
-        # the file so make sure to yield it
-        id_and_seq = self._current_entry()
-        if id_and_seq is not None:
-            yield id_and_seq
-
-    def _current_entry(self):
-        # when we hit a new entry, if this isn't the first
-        # entry of the file then put the last one in the dictionary
-        if self.current_id:
-            if len(self.current_lines) == 0:
-                logging.warning("No sequence data for '%s'", self.current_id)
-            else:
-                sequence = b"".join(self.current_lines).decode("ascii")
-                return self.current_id, sequence
-
-    @staticmethod
-    def open_file(fasta_path):
-        """
-        Open either a text file or compressed gzip file as a stream of bytes.
-        """
-        if fasta_path.endswith("gz") or fasta_path.endswith("gzip"):
-            return gzip.open(fasta_path, 'rb')
-        else:
-            return open(fasta_path, 'rb')
-
-    @staticmethod
-    def _parse_header_id(line):
-        """
-        Pull the transcript or protein identifier from the header line
-        which starts with '>'
-        """
-        if len(line) <= 1:
-            raise ValueError("No identifier on FASTA line")
-
-        return line[1:].decode("ascii")
