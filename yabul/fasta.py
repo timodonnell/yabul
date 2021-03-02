@@ -63,6 +63,7 @@ def read_fasta(filename):
         filename,
         header=None,
         skip_blank_lines=True,
+        quoting=3,  # QUOTE_NONE
         comment=';',  # Fasta comment lines start with ';'
         sep="\0",  # null separator: never split, always read one column
     )
