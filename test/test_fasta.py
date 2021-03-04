@@ -4,6 +4,7 @@
 import shutil
 import os
 import tempfile
+import time
 
 from numpy.testing import assert_array_equal
 
@@ -20,6 +21,12 @@ def test_read_protein_basic():
     assert df.loc["TEST_PROTEIN", "description"] == "TEST_PROTEIN Just a test"
     assert df.loc["TEST_PROTEIN", "sequence"] == "TEST"
 
+def test_read_protein_uniprot():
+    start = time.time()
+    df = read_fasta(os.path.join(DATA_DIR, "human.uniprot.one_per_gene.fasta.gz"))
+    duration = time.time() - start
+    print("Read time:", duration)
+    assert len(df) == 20610
 
 def test_read_and_write():
     for test_file in ["protein.fasta", "transcripts.fasta"]:

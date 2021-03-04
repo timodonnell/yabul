@@ -58,33 +58,38 @@ def read_fasta(filename):
     DataFrame is the "sequence ID", i.e. the first space-separated token of the
     description.
     """
-    # We (mis-) use pandas to parse the file.
-    df = pandas.read_csv(
+    # We (mis-) use pandas to read the file.
+    lines = pandas.read_csv(
         filename,
         header=None,
         skip_blank_lines=True,
+        dtype=str,
+        na_filter=False,
         quoting=3,  # QUOTE_NONE
         comment=';',  # Fasta comment lines start with ';'
         sep="\0",  # null separator: never split, always read one column
     )
-    assert df.shape[1] == 1  # one column
-    df.columns = ["raw"]
+    assert lines.shape[1] == 1  # one column
+    lines.columns = ["raw"]
 
-    is_header_line = df.raw.str.startswith(">")
+    result = []
+    current_id = None
+    pieces = []
+    for line in lines.raw:
+        if line.startswith(">"):
+            if current_id is not None:
+                result.append((current_id, "".join(pieces)))
+                pieces.clear()
+            current_id = line[1:]
+        else:
+            pieces.append(line)
 
-    # Assign a new index for every line starting with ">"
-    df.loc[is_header_line, "idx"] = 1
-    df.idx = df.idx.cumsum()
-    df.idx = df.idx.fillna(method="ffill").astype(int)
+    # Handle last sequence
+    if current_id is not None:
+        result.append((current_id, "".join(pieces)))
 
-    idx_to_description = df.loc[is_header_line].set_index("idx").raw.str.slice(1)
-
-    df.loc[~is_header_line, "sequence_piece"] = df.raw
-    df.sequence_piece = df.sequence_piece.fillna("")
-
-    result = df.groupby("idx").sequence_piece.apply("".join).to_frame()
-    result.columns = ["sequence"]
-    result.insert(0, "description", idx_to_description)
+    result = pandas.DataFrame(result, columns=["description", "sequence"])
     result.index = result.description.str.split().str.get(0)
     result.index.name = "id"
+
     return result
