@@ -1,4 +1,4 @@
-dist: groovy
+dist: focal
 language: python
 python:
   - "3.6"
