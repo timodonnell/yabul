@@ -43,7 +43,12 @@ def write_fasta(filename, sequences):
         handle.close()
 
 
-def read_fasta(filename, max_sequences=None, chunksize=10000, progress=True):
+def read_fasta(
+        filename,
+        max_sequences=None,
+        chunksize=10000,
+        progress=True,
+        encoding='ascii'):
     """
     Parse a fasta file to a pandas DataFrame.
 
@@ -58,6 +63,8 @@ def read_fasta(filename, max_sequences=None, chunksize=10000, progress=True):
     progress : bool, optional
         If True and the tqdm package is available, a progress bar will be shown.
         The progrses bar shows progress through the file (in bytes) as it is read.
+    encoding : string, optional
+        Character encoding
 
     Returns
     -------
@@ -110,6 +117,8 @@ def read_fasta(filename, max_sequences=None, chunksize=10000, progress=True):
             dtype=str,
             na_filter=False,
             chunksize=chunksize,
+            encoding=encoding,
+            encoding_errors='replace',
             quoting=3,  # QUOTE_NONE
             comment=';',  # Fasta comment lines start with ';'
             sep="\0",  # null separator: never split, always read one column
