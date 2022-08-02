@@ -27,6 +27,28 @@ def test_read_protein_uniprot():
     duration = time.time() - start
     print("Read time:", duration)
     assert len(df) == 20610
+    
+    df2 = read_fasta(
+        os.path.join(DATA_DIR, "human.uniprot.one_per_gene.fasta.gz"),
+        progress=False)
+    assert_array_equal(df, df2)
+
+
+    df3 = read_fasta(
+        os.path.join(DATA_DIR, "human.uniprot.one_per_gene.fasta.gz"),
+        chunksize=500,
+        progress=False)
+    assert_array_equal(df, df3)
+
+    for num in [5, 499, 500, 501, 502]:
+        df4 = read_fasta(
+            os.path.join(DATA_DIR, "human.uniprot.one_per_gene.fasta.gz"),
+            max_sequences=num,
+            chunksize=500,
+            progress=False)
+        assert len(df4) == num
+        assert_array_equal(df.head(num), df4)
+
 
 def test_read_and_write():
     for test_file in ["protein.fasta", "transcripts.fasta"]:
